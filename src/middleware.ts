@@ -1,5 +1,4 @@
 import { authMiddleware } from "@clerk/nextjs";
-import { Console } from "console";
 
 export default authMiddleware({
         beforeAuth() {

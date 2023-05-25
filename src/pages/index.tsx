@@ -6,7 +6,7 @@ import { SignIn, SignedIn, SignedOut, SignInButton, SignOutButton, useUser } fro
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const { data } = api.posts.getAll.useQuery();
 
   return (
     <>
@@ -26,7 +26,12 @@ const Home: NextPage = () => {
             <SignInButton />
           </SignedOut>
         </div>
-        <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
+          {data?.map((post) => (
+          <div key={post.id}>{post.content}</div>
+          ))}
+        <div>
+
+        </div>
       </main>
     </>
   );

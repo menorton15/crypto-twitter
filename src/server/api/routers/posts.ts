@@ -1,4 +1,4 @@
-import type { User } from "@clerk/nextjs/dist/api";
+import type { User } from "@clerk/nextjs/dist/types/api";
 import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -7,6 +7,22 @@ import {
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+const filterUserForClient = (user: User) => {
+  return {
+    id: user.id,
+    username: user.username,
+    profileImageUrl: user.profileImageUrl,
+  };
+};
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(3, "1 m"),
+  analytics: true,
+});
 
 export const postsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
@@ -14,14 +30,6 @@ export const postsRouter = createTRPCRouter({
       take: 100,
       orderBy: [{ createdAt: "desc" }],
     });
-
-    const filterUserForClient = (user: User) => {
-      return {
-        id: user.id,
-        username: user.username,
-        profileImageUrl: user.profileImageUrl,
-      };
-    };
 
     const users = (
       await clerkClient.users.getUserList({
@@ -59,6 +67,10 @@ export const postsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const authorID = ctx.userId;
+
+      const { success } = await ratelimit.limit(authorID);
+
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const post = await ctx.prisma.post.create({
         data: {

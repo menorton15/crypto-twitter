@@ -1,4 +1,4 @@
-import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { api } from "~/utils/api";
 import Image from "next/image";
@@ -17,10 +17,7 @@ const ProfileFeed = (props: { userId: string }) => {
   </div>
 };
 
-type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
-const ProfilePage: NextPage<PageProps>= (props: PageProps) => {
-
-  const { username } = props.username;
+const ProfilePage: NextPage<{username: string}>= ({username}) => {
 
   const { data } = api.profile.getUserByUsername.useQuery({
     username,

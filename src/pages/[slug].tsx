@@ -18,7 +18,10 @@ const ProfileFeed = (props: { userId: string }) => {
 };
 
 type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
-const ProfilePage: NextPage<PageProps> = ({ username }) => {
+const ProfilePage: NextPage = (props: PageProps) => {
+
+  const { username } = props;
+
   const { data } = api.profile.getUserByUsername.useQuery({
     username,
   });

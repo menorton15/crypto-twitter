@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 
 import dayjs from "dayjs";
 import Link from "next/link";

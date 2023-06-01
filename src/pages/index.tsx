@@ -98,7 +98,7 @@ const Feed = () => {
   );
 };
 
-const Home: NextPage = (props) => {
+const Home: NextPage = () => {
   const { isLoaded: userLoaded } = useUser();
 
   // Start fetching asap

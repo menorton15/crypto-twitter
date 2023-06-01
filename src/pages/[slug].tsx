@@ -18,9 +18,9 @@ const ProfileFeed = (props: { userId: string }) => {
 };
 
 type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
-const ProfilePage: NextPage = (props: PageProps) => {
+const ProfilePage: NextPage<PageProps>= (props) => {
 
-  const { username } = props;
+  const { username } = props.username;
 
   const { data } = api.profile.getUserByUsername.useQuery({
     username,
@@ -66,11 +66,11 @@ import { PostView } from "~/components/postview";
 export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = createServerSideHelpers({
     router: appRouter,
-    ctx: { prisma, userId: null },
+    ctx: { prisma, userId: null, },
     transformer: superjson,
   });
 
-  const slug = context.params?.slug;
+  const slug = context.params?.slug as string;
 
   if (typeof slug !== "string") throw new Error("no slug");
 

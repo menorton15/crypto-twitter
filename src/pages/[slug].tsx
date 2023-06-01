@@ -18,7 +18,7 @@ const ProfileFeed = (props: { userId: string }) => {
 };
 
 type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
-const ProfilePage: NextPage<PageProps>= (props) => {
+const ProfilePage: NextPage<PageProps>= (props: PageProps) => {
 
   const { username } = props.username;
 

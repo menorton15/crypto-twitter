@@ -4,4 +4,15 @@
 
 body {
     @apply bg-black text-slate-100;
+    
+    overscroll-behavior: none;
 }
+
+div::-webkit-scrollbar {
+    display: none;
+}
+
+div {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }

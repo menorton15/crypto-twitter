@@ -42,6 +42,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           <Image
             src={data.profileImageUrl}
             alt={`${data.username ?? ""}'s profile pic`}
+            //TODO: dynamic image sizes
             width={128}
             height={128}
             className="absolute bottom-0 left-0 -mb-[64px] ml-4 rounded-full 

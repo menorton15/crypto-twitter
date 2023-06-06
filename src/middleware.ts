@@ -4,7 +4,7 @@ export default authMiddleware({
         beforeAuth() {
           console.log("middleware running");
         },
-        publicRoutes: ["/", "/:locale/sign-in"]
+        publicRoutes: ["/", "/:locale/sign-in", "/api/trpc/posts.getAll"]
     }
 );
 

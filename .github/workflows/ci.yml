@@ -5,6 +5,15 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+      UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      CONTRACT_ADDRESS: ${{ secrets.CONTRACT_ADDRESS }}
+      NETWORK: ${{ secrets.NETWORK }}
 
     steps:
       - name: Checkout
@@ -23,13 +32,4 @@ jobs:
         run: npm run lint
 
       - name: Run Tests
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}  #TODO: set to a test database url
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
-          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          CONTRACT_ADDRESS: ${{ secrets.CONTRACT_ADDRESS }}
-          NETWORK: ${{ secrets.NETWORK }}
         run: npx hardhat test

@@ -11,6 +11,11 @@ import { Redis } from "@upstash/redis";
 import { filterUserForClient } from "~/server/helpers/filterUserForClients";
 import type { Post } from "@prisma/client";
 
+import { mintPostNFT } from "../../../utils/web3";
+import { getEnvironment } from "../../../utils/env";
+
+const {CONTRACT_ADDRESS} = getEnvironment();
+
 const addUserDataToPosts = async (posts: Post[]) => {
   const users = (
     await clerkClient.users.getUserList({
@@ -19,7 +24,11 @@ const addUserDataToPosts = async (posts: Post[]) => {
     })
   ).map(filterUserForClient);
 
-  return posts.map((post) => {
+//users.forEach((user) => user.web3Wallets.forEach((wallet) => console.log("*********************************\n", wallet)))
+  
+//users.forEach((user) => console.log(user))
+//users.forEach((user) => user.web3Wallets.forEach((wallet) => console.log("*********************************\n", wallet.verification)))
+  const response = posts.map((post) => {
     const author = users.find((user) => user.id === post.authorID);
 
     if (!author || !author.username)
@@ -36,6 +45,8 @@ const addUserDataToPosts = async (posts: Post[]) => {
       },
     };
   });
+
+  return response;
 };
 
 const ratelimit = new Ratelimit({
@@ -106,19 +117,42 @@ export const postsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const authorID = ctx.userId;
+      const newAuthorID = ctx.userId;
 
-      const { success } = await ratelimit.limit(authorID);
+      const { success } = await ratelimit.limit(newAuthorID);
 
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const post = await ctx.prisma.post.create({
         data: {
-          authorID,
+          authorID: newAuthorID,
           content: input.content,
           parentID: input.parentID,
         },
       });
+
+      if (!post || post === undefined) throw new Error("Post failed.  Cannot mint Post NFT.")
+
+      const { createdAt, id, content, authorID } = post;
+      const user = (
+        await clerkClient.users.getUserList()
+      ).map(filterUserForClient).find((user) => user.id === authorID)
+
+      if (!user || user === undefined) throw new Error("User could not be found");
+      if (!user.username || user.username === undefined) throw new Error("No username for poster.")
+
+      let parentID = post.parentID;
+
+      if (!CONTRACT_ADDRESS || CONTRACT_ADDRESS === undefined) throw new Error("CONTRACT_ADDRESS env variable not defined.")
+      if (!parentID || parentID === null) parentID = "";
+
+      console.log(user.address);
+
+      mintPostNFT(user.address, createdAt.getTime(), id, content, user.username, parentID).catch(
+        (err: string) => {
+          throw new Error(err);
+        }
+      );
 
       return post;
     }),

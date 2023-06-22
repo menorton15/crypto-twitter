@@ -1,10 +1,11 @@
+import { dark } from "@clerk/themes";
 import { type NextPage } from "next";
-
+import { useEffect, useState } from "react";
 import {
   SignedIn,
   SignedOut,
   SignInButton,
-  SignOutButton,
+  UserButton,
   useUser,
 } from "@clerk/nextjs";
 
@@ -32,13 +33,20 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
-  const { isLoaded: userLoaded } = useUser();
+  const { isSignedIn, user, isLoaded: userLoaded } = useUser();
+  const [, setIsUsernamePromptVisible] = useState(false);
+
+  useEffect(() => {
+    if (isSignedIn && user && !user.publicMetadata.username) {
+      setIsUsernamePromptVisible(true);
+    }
+  }, [isSignedIn, user]);
 
   // Start fetching asap
   api.posts.getAll.useQuery();
 
   // Return empty div if isn't loaded yet
-  if (!userLoaded) return <div />;
+  if (!userLoaded) return <LoadingPage />;
 
   return (
     <>
@@ -48,7 +56,7 @@ const Home: NextPage = () => {
             <SignedIn>
               {/* Mount the UserButton component */}
               <CreatePostWizard parentID={null} />
-              <SignOutButton />
+              <UserButton showName={true} appearance={{ baseTheme: dark }} />
             </SignedIn>
           </div>
           <SignedOut>

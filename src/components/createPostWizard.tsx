@@ -17,6 +17,7 @@ export const CreatePostWizard = (props: {parentID: string | null}) => {
   const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
     onSuccess: () => {
       setInput("");
+      void ctx.posts.getAll.invalidate();
       void ctx.posts.getChildrenPosts.invalidate();
     },
     onError: (e) => {
@@ -34,7 +35,7 @@ export const CreatePostWizard = (props: {parentID: string | null}) => {
   return (
     <div className="flex w-full gap-3">
       <Image
-        src={user.profileImageUrl}
+        src={user.imageUrl}
         alt="Profile image"
         className="h-14 w-14 rounded-full"
         width={56}

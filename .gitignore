@@ -50,8 +50,11 @@ typechain-types
 
 # Hardhat files
 cache
-artifacts
-!artifacts/contracts/CryptoTwitter.sol/CryptoTwitter.json
+artifacts/*
+!artifacts/contracts
+!artifacts/contracts/*/
+artifacts/contracts/*/*
+!artifacts/contracts/*/CryptoTwitter.json
 
 
 node_modules
@@ -62,7 +65,4 @@ coverage.json
 typechain
 typechain-types
 
-# Hardhat files
-cache
-artifacts
 

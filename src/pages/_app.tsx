@@ -7,6 +7,9 @@ import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import Head from "next/head";
 
+//import Provider from '../components/web3/Provider'
+//import Web3Manager from '../components/web3/Web3Manager'
+
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider {...pageProps}>

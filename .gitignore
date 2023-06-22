@@ -51,6 +51,7 @@ typechain-types
 # Hardhat files
 cache
 artifacts
+!artifacts/contracts/CryptoTwitter.sol/CryptoTwitter.json
 
 
 node_modules

@@ -26,6 +26,7 @@ contract CryptoTwitter is ERC721URIStorage, Ownable {
     constructor() ERC721("CryptoTwitter", "CTWTR") {}
 
     function mintNFT(
+        address recipient,
         uint256 createdAt,
         string memory id,
         string memory content,
@@ -35,7 +36,7 @@ contract CryptoTwitter is ERC721URIStorage, Ownable {
         _tokenIds.increment();
         uint256 newTokenId = _tokenIds.current();
 
-        _safeMint(msg.sender, newTokenId);
+        _safeMint(recipient, newTokenId);
 
         Post memory newPost = Post({
             id: id,

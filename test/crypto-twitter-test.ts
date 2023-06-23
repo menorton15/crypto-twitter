@@ -69,6 +69,8 @@ describe("CryptoTwitter", function () {
 
     const tokenId = logs.topics[1] as string;
 
+    console.log(tokenId);
+
     const nftData = await cryptoTwitter.getNFTData(tokenId);
     const dataByPostId: {
       id: string;

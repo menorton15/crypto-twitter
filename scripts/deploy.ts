@@ -18,7 +18,7 @@ async function deploy() {
   console.log(
     "Contract deployed to address:",
     receipt.contractAddress,
-    "./nUpdate CONTRACT_ADDRESS env variables in .env files, github secrets, and vercel."
+    ".\nUpdate CONTRACT_ADDRESS env variables in .env files, github secrets, and vercel."
   );
 }
 

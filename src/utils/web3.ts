@@ -79,7 +79,7 @@ export const mintPostNFT = async (
     author,
     parentID
   );
-  const response = await mintTx.wait();
+  const response = await mintTx.wait(1);
 
   if (!response || response === null) throw new Error("Transaction failed");
 
@@ -87,4 +87,8 @@ export const mintPostNFT = async (
   if (!logs || logs === null) throw new Error("Transaction log format invalid");
 
   console.log("Token ", logs.topics[1], " minted.");
+
+  const tokenId = logs.topics[1];
+
+  return tokenId;
 };

@@ -14,7 +14,7 @@ import type { Post } from "@prisma/client";
 import { mintPostNFT } from "../../../utils/web3";
 import { getEnvironment } from "../../../utils/env";
 
-const {CONTRACT_ADDRESS} = getEnvironment();
+const { CONTRACT_ADDRESS } = getEnvironment();
 
 const addUserDataToPosts = async (posts: Post[]) => {
   const users = (
@@ -24,10 +24,6 @@ const addUserDataToPosts = async (posts: Post[]) => {
     })
   ).map(filterUserForClient);
 
-//users.forEach((user) => user.web3Wallets.forEach((wallet) => console.log("*********************************\n", wallet)))
-  
-//users.forEach((user) => console.log(user))
-//users.forEach((user) => user.web3Wallets.forEach((wallet) => console.log("*********************************\n", wallet.verification)))
   const response = posts.map((post) => {
     const author = users.find((user) => user.id === post.authorID);
 
@@ -63,7 +59,7 @@ export const postsRouter = createTRPCRouter({
         where: { id: input.id },
       });
 
-      if (!post) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!post) throw new TRPCError({ code: "NOT_FOUND", message: "line62" });
 
       return (await addUserDataToPosts([post]))[0];
     }),
@@ -131,29 +127,59 @@ export const postsRouter = createTRPCRouter({
         },
       });
 
-      if (!post || post === undefined) throw new Error("Post failed.  Cannot mint Post NFT.")
+      if (!post || post === undefined)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post could not be found. Cannot mint Post NFT.",
+        });
 
       const { createdAt, id, content, authorID } = post;
-      const user = (
-        await clerkClient.users.getUserList()
-      ).map(filterUserForClient).find((user) => user.id === authorID)
+      const user = (await clerkClient.users.getUserList())
+        .map(filterUserForClient)
+        .find((user) => user.id === authorID);
 
-      if (!user || user === undefined) throw new Error("User could not be found");
-      if (!user.username || user.username === undefined) throw new Error("No username for poster.")
+      if (!user || user === undefined)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User could not be found",
+        });
+
+      if (!user.username || user.username === undefined)
+        throw new TRPCError({
+          code: "PARSE_ERROR",
+          message: "No username for poster.",
+        });
 
       let parentID = post.parentID;
 
-      if (!CONTRACT_ADDRESS || CONTRACT_ADDRESS === undefined) throw new Error("CONTRACT_ADDRESS env variable not defined.")
+      if (!CONTRACT_ADDRESS || CONTRACT_ADDRESS === undefined)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "CONTRACT_ADDRESS env variable not defined.",
+        });
       if (!parentID || parentID === null) parentID = "";
 
       console.log(user.address);
 
-      mintPostNFT(user.address, createdAt.getTime(), id, content, user.username, parentID).catch(
-        (err: string) => {
-          throw new Error(err);
-        }
-      );
+      ///const tokenId = 
+      await mintPostNFT(
+        user.address,
+        createdAt.getTime(),
+        id,
+        content,
+        user.username,
+        parentID
+      ).catch((err: string) => {
+        throw new Error(err);
+      });
 
+      /*
+      if (!tokenId || tokenId === undefined)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Post NFT mint failed.",
+        });
+*/
       return post;
     }),
 });

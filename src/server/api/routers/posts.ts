@@ -5,10 +5,10 @@ import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
-} from "~/server/api/trpc";
+} from "../../api/trpc" //"~/server/api/trpc";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { filterUserForClient } from "~/server/helpers/filterUserForClients";
+import { filterUserForClient } from "../../helpers/filterUserForClients";
 import type { Post } from "@prisma/client";
 
 import { mintPostNFT } from "../../../utils/web3";
@@ -159,10 +159,8 @@ export const postsRouter = createTRPCRouter({
         });
       if (!parentID || parentID === null) parentID = "";
 
-      console.log(user.address);
-
-      ///const tokenId = 
-      await mintPostNFT(
+      console.log(user.address);/+/
+      const tokenId = await mintPostNFT(
         user.address,
         createdAt.getTime(),
         id,
@@ -173,13 +171,13 @@ export const postsRouter = createTRPCRouter({
         throw new Error(err);
       });
 
-      /*
+      
       if (!tokenId || tokenId === undefined)
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Post NFT mint failed.",
         });
-*/
+
       return post;
     }),
 });

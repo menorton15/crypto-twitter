@@ -1,3 +1,5 @@
+///import { ethers } from "hardhat";
+
 import { ethers } from "hardhat";
 
 async function deploy() {
@@ -12,6 +14,8 @@ async function deploy() {
 
   const receipt = await response.wait(1);
 
+  console.log(receipt?.blockHash)
+
   if (!receipt || receipt === undefined)
     throw new Error("Deployment failed. No receipt.");
 
@@ -22,4 +26,4 @@ async function deploy() {
   );
 }
 
-await deploy();
+deploy();
